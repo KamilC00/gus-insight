@@ -1,0 +1,9 @@
+1. Install requirements.txt
+# 2. Run ./venv/bin/python init_db.py
+3. Run ./venv/bin/python fetch_data.py
+4. Run ./venv/bin/python app.py
+
+sqlite zostaje na użytkowników
+zostawić zapis do bazy
+aktualizować co jakiś czas dane
+logowanie do wyświetlania wykresów
