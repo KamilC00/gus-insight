@@ -94,4 +94,4 @@ def chart():
     return render_template("index.html", chart=chart, chart2=chart2, chart3=chart3, chart4=chart4)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
