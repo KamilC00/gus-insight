@@ -1,4 +1,5 @@
 from db import execute_query
+from fetch_data import fetch_data
 import os
 
 def check_db():
@@ -69,5 +70,6 @@ def init_db():
     create_admin_user()
     print("Admin user created successfully.")
     print("Database initialized successfully.")
+    fetch_data()
   else:
     print("Databese already initialized")
