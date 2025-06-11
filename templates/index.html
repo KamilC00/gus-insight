@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Wykres GUS</title>
-</head>
-<body>
+{% extends "html_template.html" %}
+{% block info %}
   <img src="data:image/png;base64,{{ chart }}" alt="Wykres">
-</body>
-</html>
+{% endblock info %}

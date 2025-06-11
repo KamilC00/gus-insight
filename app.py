@@ -5,7 +5,7 @@ from forms import LoginForm
 from sample_visualisation import get_data
 from passlib.hash import pbkdf2_sha256
 import sqlite3
-from init_db import init_db
+import init_db 
 
 init_db.init_db()
 
@@ -53,23 +53,36 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-  if current_user.is_authenticated:
-     return redirect(url_for('chart'))
-  form = LoginForm()
-  if form.validate_on_submit():
-     conn = sqlite3.connect('database.db')
-     curs = conn.cursor()
-     curs.execute("SELECT * FROM users where username = (?)",    [form.username.data])
-     user = list(curs.fetchone())
-     us = load_user(user[0])
-     if form.username.data == us.username and pbkdf2_sha256.verify(form.password.data, us.password):
-        login_user(us, remember=form.remember.data)
-        uuser = list({form.username.data})[0].split('@')[0]
-        flash('Logged in successfully '+uuser)
+    if current_user.is_authenticated:
         return redirect(url_for('chart'))
-     else:
-        flash('Login Unsuccessfull.')
-  return render_template('login.html',title='Login', form=form)
+    form = LoginForm()
+    if form.validate_on_submit():
+        conn = sqlite3.connect('database.db')
+        curs = conn.cursor()
+        curs.execute("SELECT * FROM users where username = (?)", [form.username.data])
+        user_data = curs.fetchone()
+        
+        if user_data is None:
+            flash('Login Unsuccessful.')
+            return render_template('login.html', title='Login', form=form)
+        
+        user = list(user_data)
+        us = load_user(user[0])
+        
+        if form.username.data == us.username and pbkdf2_sha256.verify(form.password.data, us.password):
+            login_user(us, remember=form.remember.data)
+            uuser = list({form.username.data})[0].split('@')[0]
+            flash('Logged in successfully '+uuser)
+            return redirect(url_for('chart'))
+        else:
+            flash('Login Unsuccessful.')
+    return render_template('login.html', title='Login', form=form)
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 
 @app.route("/chart")
 @login_required
