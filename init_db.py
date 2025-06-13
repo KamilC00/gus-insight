@@ -12,6 +12,10 @@ WHERE type='table' AND name='users';
 SELECT name FROM sqlite_master 
 WHERE type='table' AND name='gus_data';
 """
+  check_chart_table = """
+SELECT name FROM sqlite_master 
+WHERE type='table' AND name='chart_data';
+"""
 
   if not os.path.exists("database.db"):
     return False
@@ -19,11 +23,12 @@ WHERE type='table' AND name='gus_data';
   try:
       users_result = execute_query(check_users_table)
       gus_data_result = execute_query(check_gus_data_table)
+      chart_result = execute_query(check_chart_table)
       
       users_exists = len(users_result) > 0 if users_result else False
       gus_data_exists = len(gus_data_result) > 0 if gus_data_result else False
-      
-      return users_exists and gus_data_exists
+      chart_result_exists = len(chart_result) > 0 if chart_result else False
+      return users_exists and gus_data_exists and chart_result_exists
   except Exception as e:
       print(f"Error checking tables: {e}")
       return False
@@ -47,11 +52,24 @@ CREATE TABLE IF NOT EXISTS gus_data (
   year INTEGER NOT NULL,
   value REAL NOT NULL
 );
+
+"""
+  create_chart_data_table = """
+CREATE TABLE IF NOT EXISTS chart_data (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  chart_name TEXT NOT NULL UNIQUE,
+  chart_data TEXT NOT NULL
+);
 """
 
-
   execute_query(create_users_table)
+  print("Users table created successfully.")
+
   execute_query(create_gus_data_table)
+  print("GUS data table created successfully.")
+
+  execute_query(create_chart_data_table)
+  print("Chart data table created successfully.")
 
 def create_admin_user():
   

@@ -117,6 +117,45 @@ def plot_fuel_data():
   except Exception as e:
     print(f"An error occurred while fetching data: {e}")
     
+def save_plot_to_db(base64_plot, chart_name):
+  insert_or_replace_chart_data = """
+  INSERT OR REPLACE INTO chart_data (chart_name, chart_data)
+  VALUES (?, ?);
+  """
+  
+  try:
+    with sqlite3.connect("database.db") as con:
+      cursor = con.cursor()
+      cursor.execute(insert_or_replace_chart_data, (chart_name, base64_plot))
+      con.commit()
+      print(f"Chart '{chart_name}' saved successfully to database.")
+      return True
+  except Exception as e:
+    print(f"An error occurred while saving chart to database: {e}")
+    return False
+
+def get_plot_from_db(chart_name):
+  select_chart_query = """
+  SELECT chart_data FROM chart_data WHERE chart_name = ?;
+  """
+  
+  try:
+    with sqlite3.connect("database.db") as con:
+      cursor = con.cursor()
+      cursor.execute(select_chart_query, (chart_name,))
+      result = cursor.fetchone()
+      
+      if result:
+        print(f"Chart '{chart_name}' retrieved successfully from database.")
+        return result[0]  # Return the base64 image data
+      else:
+        print(f"Chart '{chart_name}' not found in database.")
+        return None
+        
+  except Exception as e:
+    print(f"An error occurred while retrieving chart from database: {e}")
+    return None
+
 if __name__ == "__main__":
   plot_unemployment_data()
   plot_inflation_data()

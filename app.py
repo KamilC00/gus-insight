@@ -2,12 +2,29 @@ import time
 from flask import Flask, jsonify, render_template, flash, request, redirect, Response, url_for
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from forms import LoginForm
-from sample_visualisation import plot_unemployment_data, plot_inflation_data, plot_alcohol_data, plot_fuel_data
+from sample_visualisation import plot_unemployment_data, plot_inflation_data, plot_alcohol_data, plot_fuel_data, save_plot_to_db, get_plot_from_db
 from passlib.hash import pbkdf2_sha256
 import sqlite3
 import init_db 
 
 init_db.init_db()
+
+unemployment_plot = plot_unemployment_data()
+if unemployment_plot:
+  save_plot_to_db(unemployment_plot, "unemployment_by_gender")
+
+inflation_plot = plot_inflation_data()
+if inflation_plot:
+  save_plot_to_db(inflation_plot, "inflation_trends")
+
+alcohol_plot = plot_alcohol_data()
+if alcohol_plot:
+  save_plot_to_db(alcohol_plot, "alcohol_prices")
+
+fuel_plot = plot_fuel_data()
+if fuel_plot:
+  save_plot_to_db(fuel_plot, "fuel_prices")
+
 
 app = Flask(__name__)
 
@@ -87,10 +104,10 @@ def logout():
 @app.route("/chart")
 @login_required
 def chart():
-    chart = plot_unemployment_data()
-    chart2 = plot_inflation_data()
-    chart3 = plot_alcohol_data()
-    chart4 = plot_fuel_data()
+    chart = get_plot_from_db("unemployment_by_gender")
+    chart2 = get_plot_from_db("inflation_trends")
+    chart3 = get_plot_from_db("alcohol_prices")
+    chart4 = get_plot_from_db("fuel_prices")
     return render_template("index.html", chart=chart, chart2=chart2, chart3=chart3, chart4=chart4)
 
 if __name__ == "__main__":
