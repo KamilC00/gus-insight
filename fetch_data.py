@@ -10,7 +10,9 @@ API_PATHS = [
   "/api/v1/data/by-variable/217230", # 217230 - "Inflacja"
   "/api/v1/data/by-variable/8265", # 8265 - "wódka czysta 40% - za 0,5l"
   "/api/v1/data/by-variable/5003", # 5003 - "piwo jasne pełne, butelkowane - za 0,5l"
-  "/api/v1/data/by-variable/196398" # 196398 - "benzyna silnikowa bezołowiowa, 95-oktanowa - za 1l"
+  "/api/v1/data/by-variable/196398", # 196398 - "benzyna silnikowa bezołowiowa, 95-oktanowa - za 1l"
+  "/api/v1/data/by-variable/73862", # 73862 - "powierzchnia cmentarzy ogółem"
+  "/api/v1/data/by-variable/64428" # 64428 - "przeciętne miesięczne wynagrodzenie brutto"
 ]
 
 def save_to_db(data):

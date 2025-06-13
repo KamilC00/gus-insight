@@ -117,6 +117,51 @@ def plot_fuel_data():
   except Exception as e:
     print(f"An error occurred while fetching data: {e}")
     
+def plot_cementary_data():
+  query = "SELECT * FROM gus_data WHERE variable_id = 73862;"
+  try:
+    with sqlite3.connect("database.db") as con:
+      df = pd.read_sql_query(query, con)
+      filtered_df = df[(df["unit_name"] == "POLSKA") & (df["year"] >= 2015) & (df["year"] <= 2024)].copy()
+      filtered_df.drop(columns=["id", "unit_id", "unit_name", "variable_id"], inplace=True)
+      filtered_df.set_index("year")["value"].plot(kind="line")
+      plt.title("Powierzchnia cmentarzy w Polsce w latach 2015-2024")
+      plt.xlabel("Rok")
+      plt.ylabel("Rozmiar")
+      plt.xticks(rotation=0)
+      plt.tight_layout()
+
+      buf = io.BytesIO()
+      plt.savefig(buf, format="png")
+      buf.seek(0)
+      image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+      plt.close()
+      return image_base64
+  except Exception as e:
+    print(f"An error occurred while fetching data: {e}")
+
+def plot_average_salary_data():
+  query = "SELECT * FROM gus_data WHERE variable_id = 64428;"
+  try:
+    with sqlite3.connect("database.db") as con:
+      df = pd.read_sql_query(query, con)
+      filtered_df = df[(df["unit_name"] == "POLSKA") & (df["year"] >= 2015) & (df["year"] <= 2024)].copy()
+      filtered_df.drop(columns=["id", "unit_id", "unit_name", "variable_id"], inplace=True)
+      filtered_df.set_index("year")["value"].plot(kind="line")
+      plt.title("Średnia pensja brutto w Polsce w latach 2015-2024")
+      plt.xlabel("Rok")
+      plt.ylabel("Zł")
+      plt.xticks(rotation=0)
+      plt.tight_layout()
+      buf = io.BytesIO()
+      plt.savefig(buf, format="png")
+      buf.seek(0)
+      image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+      plt.close()
+    return image_base64
+  except Exception as e:
+    print(f"An error occurred while fetching data: {e}")
+    
 def save_plot_to_db(base64_plot, chart_name):
   insert_or_replace_chart_data = """
   INSERT OR REPLACE INTO chart_data (chart_name, chart_data)
@@ -152,6 +197,7 @@ def get_plot_from_db(chart_name):
         print(f"Chart '{chart_name}' not found in database.")
         return None
         
+
   except Exception as e:
     print(f"An error occurred while retrieving chart from database: {e}")
     return None

@@ -2,7 +2,7 @@ import time
 from flask import Flask, jsonify, render_template, flash, request, redirect, Response, url_for
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from forms import LoginForm
-from sample_visualisation import plot_unemployment_data, plot_inflation_data, plot_alcohol_data, plot_fuel_data, save_plot_to_db, get_plot_from_db
+from sample_visualisation import plot_unemployment_data, plot_inflation_data, plot_alcohol_data, plot_fuel_data, save_plot_to_db, get_plot_from_db, plot_cementary_data, plot_average_salary_data
 from passlib.hash import pbkdf2_sha256
 import sqlite3
 import init_db 
@@ -24,7 +24,12 @@ if alcohol_plot:
 fuel_plot = plot_fuel_data()
 if fuel_plot:
   save_plot_to_db(fuel_plot, "fuel_prices")
-
+cementary_plot = plot_cementary_data()
+if cementary_plot:
+  save_plot_to_db(cementary_plot, "cementary_sizes")
+salary_plot = plot_average_salary_data()
+if salary_plot:
+  save_plot_to_db(salary_plot, "salary_trends")
 
 app = Flask(__name__)
 
@@ -108,7 +113,10 @@ def chart():
     chart2 = get_plot_from_db("inflation_trends")
     chart3 = get_plot_from_db("alcohol_prices")
     chart4 = get_plot_from_db("fuel_prices")
-    return render_template("index.html", chart=chart, chart2=chart2, chart3=chart3, chart4=chart4)
+    chart5 = get_plot_from_db("cementary_sizes")
+    chart6 = get_plot_from_db("salary_trends")
+
+    return render_template("index.html", chart=chart, chart2=chart2, chart3=chart3, chart4=chart4, chart5=chart5, chart6=chart6)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
